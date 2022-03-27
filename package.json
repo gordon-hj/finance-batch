@@ -2,9 +2,10 @@
   "name": "finance-batch",
   "version": "1.0.0",
   "description": "batch - crawler for finance information",
-  "main": "main.js",
+  "main": "./src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "",
+    "start": "node ./src/main.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,9 @@
   "bugs": {
     "url": "https://github.com/gordon-hj/finance-batch/issues"
   },
-  "homepage": "https://github.com/gordon-hj/finance-batch#readme"
+  "homepage": "https://github.com/gordon-hj/finance-batch#readme",
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "node-cron": "^3.0.0"
+  }
 }
