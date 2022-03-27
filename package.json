@@ -1,0 +1,23 @@
+{
+  "name": "finance-batch",
+  "version": "1.0.0",
+  "description": "batch - crawler for finance information",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gordon-hj/finance-batch.git"
+  },
+  "keywords": [
+    "nodejs",
+    "batch"
+  ],
+  "author": "gordon.hj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gordon-hj/finance-batch/issues"
+  },
+  "homepage": "https://github.com/gordon-hj/finance-batch#readme"
+}
