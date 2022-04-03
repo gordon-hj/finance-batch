@@ -1,5 +1,5 @@
-// TODO phase
-const phase = 'dev';
+// TODO phase process.env
+const phase = process.argv[2];
 console.log("Request phase =>", phase);
 const cron = require('node-cron');
 const rdb = require('./datasource/rdb')(phase);
