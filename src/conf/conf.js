@@ -4,7 +4,8 @@ module.exports = function(phase) {
     var phaseFilename = null;
     // TODO 분기 예쁘게 만들기
     switch(phase) {
-        case 'dev' || 'production':
+        case 'dev':
+        case 'production':
             phaseFilename = phase;
             break;
         default :
