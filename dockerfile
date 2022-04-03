@@ -7,4 +7,4 @@ ADD . /app
 RUN npm install
 
 EXPOSE 8080
-RUN npm start $ENV
+CMD npm start $ENV
