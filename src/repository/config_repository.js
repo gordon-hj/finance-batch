@@ -14,7 +14,7 @@ class Config {
     }
 }
 
-exports.selectByKey = (key) => {
+exports.findByKey = (key) => {
     return new Promise((resolve, reject) => 
         ds.query(
             query = 'SELECT ?? FROM ?? WHERE `key` = ?',

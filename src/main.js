@@ -7,7 +7,7 @@ const config_repository = require('./repository/config_repository')(rdb);
 
 // 1분에 한 번씩 배치
 cron.schedule('* * * * *', function () {
-    config_repository.selectByKey('batch-allow')
+    config_repository.findByKey('batch-allow')
     .then((result) => {
         console.log(result);
         if(result.value == true) {
