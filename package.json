@@ -23,6 +23,7 @@
   "homepage": "https://github.com/gordon-hj/finance-batch#readme",
   "dependencies": {
     "mysql": "^2.18.1",
-    "node-cron": "^3.0.0"
+    "node-cron": "^3.0.0",
+    "request": "^2.88.2"
   }
 }
