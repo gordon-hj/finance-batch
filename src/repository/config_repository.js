@@ -19,7 +19,7 @@ exports.findByKey = (key) => {
             query = 'SELECT ?? FROM ?? WHERE `key` = ?',
             data = [columns, table, key],
             (result) => resolve(new Config(result[0])),
-            () => reject(),
+            (err) => reject(err),
         )
     )
 }

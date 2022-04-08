@@ -13,18 +13,14 @@ class CreditUnionRegion {
     }
 }
 
-exports.insert = (values) => {
+exports.save = (values) => {
         let insertValues = values.map(value => [value.sidoCd, value.sidoNm]);
-        console.log(insertValues);
         return new Promise((resolve, reject) => 
         this.ds.query(
             query = 'INSERT INTO `credit_union_region`(`regional_code`, `regional_name`) VALUES ?',
             data = [insertValues],
-            (result) => {
-                console.log(result);
-                resolve();
-            },
-            () => reject(),
+            (result) => resolve(result),
+            (err) => reject(err)
         )
     )
-}
+} 

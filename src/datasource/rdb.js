@@ -28,7 +28,7 @@ exports.query = (query, data, success, fail) => {
             conn.release();
             if(err) {
                 queryError(query, data, err);
-                fail();
+                fail(err);
                 return;
             }
             success(result);
