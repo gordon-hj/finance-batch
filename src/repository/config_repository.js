@@ -7,10 +7,10 @@ module.exports = (datasource) => {
 const table = 'config';
 const columns = ['id', 'key', 'value'];
 class Config {
-    constructor(id, key, value) {
-        this.id = id;
-        this.key = key;
-        this.value = (value == 'true')? true : false;
+    constructor(result) {
+        this.id = result.id;
+        this.key = result.key;
+        this.value = (result.value == "true")? true : false;
     }
 }
 
@@ -19,14 +19,8 @@ exports.findByKey = (key) => {
         ds.query(
             query = 'SELECT ?? FROM ?? WHERE `key` = ?',
             data = [columns, table, key],
-            (result) => resolve(parseRows(result)[0]),
+            (result) => resolve(new Config(result[0])),
             () => reject(),
         )
     )
-}
-
-parseRows = (result) => {
-    return result.map((v) => {
-        return new Config(v.id, v.key, v.value);
-    });
 }
