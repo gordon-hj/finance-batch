@@ -1,8 +1,8 @@
-var ds = null;
-module.exports = (datasource) => { 
-    ds = datasource;
+module.exports = (context) => { 
+    this.ds = context.ds;
     return this;
 };
+
 
 const table = 'credit_union_batch_transaction';
 const columns = ['id', 'batch_date', 'type', 'type_id', 'status', 'result'];
@@ -20,7 +20,7 @@ class CreditUnionBatchTransaction {
 exports.findLastestNotDone = (batchDate) => {
     let date = batchDate.getFullYear() + "-" + (batchDate.getMonth() + 1) + "-" + batchDate.getDate();
     return new Promise((resolve, reject) => 
-        ds.query(
+        this.ds.query(
             query = 'SELECT ?? FROM ?? WHERE `batch_date` = ? and `status` != "DONE" order by `type_id` desc limit 1',
             data = [columns, table, date],
             (result) => {

@@ -1,12 +1,10 @@
 // datasource configuration
 const mysql = require('mysql');
 
-var pool = null;
-
 module.exports = (phase) => {
     // TODO CONF 로딩 방식 예쁘게 만들기
     var conf = require('../conf/conf')(phase).datasource;
-    pool = mysql.createPool({
+    this.pool = mysql.createPool({
         connectionLimit: conf.connectionLimit,
         host: conf.host,
         user: conf.user,
@@ -19,7 +17,7 @@ module.exports = (phase) => {
 }
 
 exports.query = (query, data, success, fail) => {
-    pool.getConnection((err, conn) => {
+    this.pool.getConnection((err, conn) => {
         if(err) {
             if(conn) conn.release();
             queryError(query, data, err);

@@ -1,6 +1,5 @@
-var ds = null;
-module.exports = (datasource) => { 
-    ds = datasource;
+module.exports = (context) => { 
+    this.ds = context.ds;
     return this;
 };
 
@@ -18,7 +17,7 @@ exports.insert = (values) => {
         let insertValues = values.map(value => [value.sidoCd, value.sidoNm]);
         console.log(insertValues);
         return new Promise((resolve, reject) => 
-        ds.query(
+        this.ds.query(
             query = 'INSERT INTO `credit_union_region`(`regional_code`, `regional_name`) VALUES ?',
             data = [insertValues],
             (result) => {

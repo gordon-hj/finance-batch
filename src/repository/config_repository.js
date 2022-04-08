@@ -1,6 +1,5 @@
-var ds = null;
-module.exports = (datasource) => { 
-    ds = datasource;
+module.exports = (context) => { 
+    this.ds = context.ds;
     return this;
 };
 
@@ -16,7 +15,7 @@ class Config {
 
 exports.findByKey = (key) => {
     return new Promise((resolve, reject) => 
-        ds.query(
+        this.ds.query(
             query = 'SELECT ?? FROM ?? WHERE `key` = ?',
             data = [columns, table, key],
             (result) => resolve(new Config(result[0])),
