@@ -16,7 +16,6 @@ exports.do = () => {
             console.log("신협 신규 트랜잭션 시작");
             return this.credit_union_region_repository.deleteAll()
             .then(() => { return this.credit_union_batch_transaction_repository.save(date, "REGIONS", null, "START")})
-            .then((id) => this.credit_union_batch_transaction_repository.findById(id))
         } else if(transaction.status == 'END') {
             return;
         } else if(transaction.status == 'FAIL') {

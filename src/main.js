@@ -10,7 +10,6 @@ cron.schedule('* * * * *', function () {
     context.config_repository.findByKey('batch-allow')
     .then((result) => {
         if(result.value == true) {
-            console.log('신협 배치 실행');
             context.credit_union_service.do();
         } else {
             console.log('신협 배치 방어 처리 되어있습니다. 실행 시키려면 config를 수정하세요.');
