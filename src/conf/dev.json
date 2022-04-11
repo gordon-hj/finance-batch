@@ -4,7 +4,7 @@
         "host" : "localhost",
         "user" : "root",
         "password" : "1q2w3e4r!@",
-        "database" : "finance-man",
+        "database" : "finance",
         "debug" : false
     }
 }
