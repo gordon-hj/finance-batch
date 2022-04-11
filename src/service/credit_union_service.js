@@ -17,19 +17,19 @@ exports.do = () => {
             return this.credit_union_region_repository.deleteAll()
             .then(() => { return this.credit_union_batch_transaction_repository.save(date, "REGIONS", null, "START")})
             .then((id) => this.credit_union_batch_transaction_repository.findById(id))
-        } else {
-            return new Promise((resolve, reject) => { resolve(transaction) })
-        }
-    })
-    .then((transaction) => {
-        if(transaction.status == "FAIL") {
+        } else if(transaction.status == 'END') {
+            return;
+        } else if(transaction.status == 'FAIL') {
             console.log("신협 트랜잭션 정지 상태");
             return;
         } else {
             return doTransaction(transaction, date)
-            .then((nextTrans) => { 
-                this.credit_union_batch_transaction_repository.update(transaction.id, "DONE", null)
-                .then(this.credit_union_batch_transaction_repository.save(date, nextTrans[0], nextTrans[1], "START"))
+            .then((nextTrans) => {
+                if(nextTrans != null)
+                    this.credit_union_batch_transaction_repository.update(transaction.id, "DONE", null)
+                    .then(this.credit_union_batch_transaction_repository.save(date, nextTrans[0], nextTrans[1], "START"))
+                else 
+                    this.credit_union_batch_transaction_repository.update(transaction.id, "END", null)
             })
             .catch((err) => {
                 console.log(err)
@@ -85,7 +85,7 @@ let doTransaction = (transaction, date) => {
             console.log('신협 상품금리 수집 => 상품단위 ID : ' + transaction.typeId);
             return this.credit_union_product_repository.findByIdGte(transaction.typeId, date)
             .then((product) => {
-                if(product == null) return
+                if(product == null) return null
                 return this.credit_union_remote.getProductDetail(product.storeCode, product.productCode)
                 .then((interest) => this.credit_union_product_repository.updateInterestById(product.id, interest))
                 .then(() => new Promise((resolve, reject) => { resolve(["PRODUCT_INTEREST", product.id + 1]) }))
