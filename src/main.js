@@ -6,7 +6,7 @@ const context = require('./context')(phase);
 
 
 // 1분에 한 번씩 배치
-// cron.schedule('* * * * *', function () {
+cron.schedule('* * * * *', function () {
     context.config_repository.findByKey('batch-allow')
     .then((result) => {
         if(result.value == true) {
@@ -16,4 +16,4 @@ const context = require('./context')(phase);
             console.log('신협 배치 방어 처리 되어있습니다. 실행 시키려면 config를 수정하세요.');
         }
     })
-// }).start();
+}).start();
