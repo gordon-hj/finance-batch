@@ -78,7 +78,7 @@ let doTransaction = (transaction) => {
                     return new Promise((resolve, reject) => { resolve(["PRODUCT_INTEREST", 0]) })
                 }
                 return this.credit_union_remote.getProducts(store.storeCode)
-                .then(this.credit_union_product_repository.save)
+                .then((products) => this.credit_union_product_repository.save(store.localCode, products))
                 .then(() => new Promise((resolve, reject) => { resolve(["PRODUCTS", store.id + 1]) }))
             })
         case "PRODUCT_INTEREST" : 
