@@ -21,6 +21,9 @@ exports.do = () => {
         } else if(transaction.status == 'FAIL') {
             console.log("신협 트랜잭션 정지 상태");
             return;
+        } else if(transaction.status == 'REQUESTED') {
+            console.log("신협 트랜잭션 요청 상태");
+            return;
         } else {
             return doTransaction(transaction, date)
             .then((nextTrans) => {
@@ -40,6 +43,7 @@ exports.do = () => {
 }
 
 let doTransaction = (transaction, date) => {
+    this.credit_union_batch_transaction_repository.update(transaction.id, "REQUESTED", null)
     console.log('신협 트랜잭션 실행 id : ' + transaction.id);
     switch(transaction.type) {
         case "REGIONS" : 
