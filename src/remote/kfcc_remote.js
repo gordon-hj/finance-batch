@@ -6,8 +6,6 @@ exports.getRegions = function() {
         request({
             uri: 'https://www.kfcc.co.kr/map/main.do',
             method: 'GET',
-            // encoding: null,
-            // headers: [{name: 'Content-Type', value: 'text/html; charset=UTF-8'}],
         },
         function(err, res, body){
             if(err) {
@@ -38,5 +36,72 @@ exports.getRegions = function() {
 
             console.debug('새마을금고 지역단위 조회 => ', regions);
             resolve(regions);
+        }
+))};
+
+exports.getStores = function(regionName, localName) {
+    return new Promise((resolve, reject) => 
+        request({
+            uri: `https://www.kfcc.co.kr/map/list.do?r1=${encodeURI(regionName)}&r2=${encodeURI(localName)}`,
+            method: 'GET',
+        },
+        function(err, res, body){
+            if(err) {
+                console.error("Request Error !! ==> " + err)
+                reject(err)
+            }
+            const $ = cheerio.load(body, {decodeEntities: false});
+            var storeRaws = $('td.no').map((_, r) => {
+                var store = {}
+                cheerio.load(r)('span').map((_, e) => {
+                    if(e.children[0] != undefined) {
+                        store[e.attribs.title] = e.children[0].data
+                    } 
+                })
+                return store
+            }).filter((_, e) => e.divCd == '001') // 본점만 조회(지점은 본점과 같음)  
+            var stores = Array.from(storeRaws)  
+
+            console.debug('새마을금고 금고 조회 => ', stores);
+            resolve(stores)
+        }
+))};
+
+exports.getProducts = function(gmgoCd) {
+    return new Promise((resolve, reject) => 
+        request({
+            uri: `https://www.kfcc.co.kr/map/goods_19.do`,
+            method: 'POST',
+            form: {OPEN_TRMID:gmgoCd, gubuncode:13}, // 13: 예금, 14: 적금
+        },
+        function(err, res, body){
+            if(err) {
+                console.error("Request Error !! ==> " + err)
+                reject(err)
+            }
+            const $ = cheerio.load(body, {decodeEntities: false});
+            var productRaws = $("div[id^='divTmp']")
+            .filter((_, e) => e.attribs.style != 'display: none')
+            .map((_, e) => {
+                var t = cheerio.load(e)
+                var product = {}
+                product.name = t('.tbl-tit')[0].children[0].data
+                product.interests = new Map()
+                t('tbody tr').map((i, a) => {
+                    var tds = cheerio.load(a)('td')
+                    var periodIndex = (i == 0) ? 1 : 0
+                    var interestIndex = (i == 0) ? 2 : 1
+                    var period = tds[periodIndex].children[0].data
+                    var interest = tds[interestIndex].children[0].data
+                    product.interests.set(period, interest)
+                })
+                return product
+            })
+
+            var products = Array.from(productRaws)
+            console.log(products)
+
+            // console.debug('새마을금고 금고 상품 조회 => ', products);
+            resolve(products)
         }
 ))};
