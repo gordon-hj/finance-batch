@@ -26,13 +26,17 @@ exports.getRegions = function() {
                  && (v.includes('>') == false)
                  && (v.includes('시') || v.includes('군') || v.includes('구'))
             )
-            var regions = new Map()
+            var regions = []
             parsed.map(e => {
                 var vs = e.split('"').map(e => e.trim()).filter(e => (e.includes(',')==false) && e.length > 0)    
-                console.log(vs)
-                regions.set(vs[0], vs.slice(1))
+                if(vs[0] == '세종') { // 세종시는 기초단위가 없는 것으로 간주함;
+                    regions.push({regionName:vs[0], localName:null})
+                } else {
+                    vs.slice(1).map(e => {
+                        regions.push({regionName:vs[0], localName:e})
+                    })
+                }
             })
-            console.log(regions)
 
             console.debug('새마을금고 지역단위 조회 => ', regions);
             resolve(regions);

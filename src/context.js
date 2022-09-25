@@ -14,7 +14,13 @@ module.exports = (phase) => {
     this.credit_union_service = require('./service/credit_union_service')(this);
 
     // 새마을금고
+    this.kfcc_batch_transaction_repository = require('./repository/kfcc_batch_transaction_repository')(this);
+    this.kfcc_region_repository = require('./repository/kfcc_region_repository')(this);
+
     this.kfcc_remote = require('./remote/kfcc_remote');
+
+    this.kfcc_service = require('./service/kfcc_service')(this);
+
     return this;
 };
 
