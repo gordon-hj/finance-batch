@@ -16,6 +16,7 @@ module.exports = (phase) => {
     // 새마을금고
     this.kfcc_batch_transaction_repository = require('./repository/kfcc_batch_transaction_repository')(this);
     this.kfcc_region_repository = require('./repository/kfcc_region_repository')(this);
+    this.kfcc_store_repository = require('./repository/kfcc_store_repository')(this);
 
     this.kfcc_remote = require('./remote/kfcc_remote');
 

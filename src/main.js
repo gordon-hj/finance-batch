@@ -17,8 +17,8 @@ const context = require('./context')(phase);
 //     })
 // }).start();
 
-// 5초에 한 번씩 배치
-cron.schedule('*/5 * * * * *', function () {
+// 3초에 한 번씩 배치
+cron.schedule('*/3 * * * * *', function () {
     context.config_repository.findByKey('kfcc-batch-allow')
     .then((result) => {
         if(result.value == true) {

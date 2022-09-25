@@ -1,6 +1,7 @@
 module.exports = (context) => { 
     this.kfcc_batch_transaction_repository = context.kfcc_batch_transaction_repository;
     this.kfcc_region_repository = context.kfcc_region_repository;
+    this.kfcc_store_repository = context.kfcc_store_repository;
     this.kfcc_remote = context.kfcc_remote;
     return this;
 };
@@ -53,8 +54,10 @@ let doTransaction = (transaction, date) => {
             console.log('새마을금고 금고단위 수집 => 지역단위 ID : ' + transaction.typeId);
             return this.kfcc_region_repository.findById(transaction.typeId, date)
             .then((region) => {
-                console.log(region)
                 return this.kfcc_remote.getStores(region.regionName, region.localName)
+                .then((stores) => this.kfcc_store_repository.save(region.id, stores, date))
+                .then((stores) => new Promise((resolve, reject) => { resolve(stores.map(v => { return {type:"PRODUCTS", typeId:v.id} })) }))
+    
                 // .then((stores) => this.credit_union_store_repository.save(stores, date))
                 // .then(() => new Promise((resolve, reject) => { resolve(["STORES", local.id + 1]) }))
             })
