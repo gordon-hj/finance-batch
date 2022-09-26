@@ -88,24 +88,24 @@ exports.getProducts = function(gmgoCd) {
             .filter((_, e) => e.attribs.style != 'display: none')
             .map((_, e) => {
                 var t = cheerio.load(e)
-                var product = {}
-                product.name = t('.tbl-tit')[0].children[0].data
-                product.interests = new Map()
+                var products = []
+                var name = t('.tbl-tit')[0].children[0].data
+
                 t('tbody tr').map((i, a) => {
+                    var product = {name:name}
                     var tds = cheerio.load(a)('td')
                     var periodIndex = (i == 0) ? 1 : 0
                     var interestIndex = (i == 0) ? 2 : 1
-                    var period = tds[periodIndex].children[0].data
-                    var interest = tds[interestIndex].children[0].data
-                    product.interests.set(period, interest)
+                    product.period = tds[periodIndex].children[0].data
+                    product.interestRaw = tds[interestIndex].children[0].data
+                    product.interest = parseFloat(product.interestRaw.replace(/[^0-9.]/g, ''))
+                    products.push(product)
                 })
-                return product
+                return products
             })
-
             var products = Array.from(productRaws)
-            console.log(products)
 
-            // console.debug('새마을금고 금고 상품 조회 => ', products);
+            console.debug('새마을금고 금고 상품 조회 => ', products);
             resolve(products)
         }
 ))};

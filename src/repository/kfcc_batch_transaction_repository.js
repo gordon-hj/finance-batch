@@ -19,7 +19,7 @@ class KfccBatchTransaction {
 exports.findOldestNotDone = (date) => {
     return new Promise((resolve, reject) => 
         this.ds.query(
-            query = 'SELECT ?? FROM `kfcc_batch_transaction` WHERE `batch_date` = ? AND `status` != "DONE" ORDER BY `created_at` ASC LIMIT 1',
+            query = 'SELECT ?? FROM `kfcc_batch_transaction` WHERE `batch_date` = ? AND `status` NOT IN ("DONE", "END") ORDER BY `created_at` ASC LIMIT 1',
             data = [columns, date],
             (result) => {
                 if(result.length == 0) resolve(null);

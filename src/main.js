@@ -28,10 +28,3 @@ cron.schedule('*/3 * * * * *', function () {
         }
     })
 }).start();
-
-
-// var date = new Date().toISOString().slice(0, 10);
-
-// context.kfcc_remote.getRegions()
-//     .then((regions) => context.kfcc_region_repository.save(regions, date))
-//     .then((all) => {console.log("testset", all)})

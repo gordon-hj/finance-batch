@@ -2,6 +2,7 @@ module.exports = (context) => {
     this.kfcc_batch_transaction_repository = context.kfcc_batch_transaction_repository;
     this.kfcc_region_repository = context.kfcc_region_repository;
     this.kfcc_store_repository = context.kfcc_store_repository;
+    this.kfcc_product_repository = context.kfcc_product_repository;
     this.kfcc_remote = context.kfcc_remote;
     return this;
 };
@@ -49,38 +50,26 @@ let doTransaction = (transaction, date) => {
             console.log('새마을금고 지역단위 수집');
             return this.kfcc_remote.getRegions()
             .then((regions) => this.kfcc_region_repository.save(regions, date))
-            .then((regions) => new Promise((resolve, reject) => { resolve(regions.map(v => { return {type:"STORES", typeId:v.id} })) }))
+            .then((regions) => new Promise(resolve => { resolve(regions.map(v => { return {type:"STORES", typeId:v.id} })) }))
         case "STORES" : 
             console.log('새마을금고 금고단위 수집 => 지역단위 ID : ' + transaction.typeId);
             return this.kfcc_region_repository.findById(transaction.typeId, date)
             .then((region) => {
                 return this.kfcc_remote.getStores(region.regionName, region.localName)
                 .then((stores) => this.kfcc_store_repository.save(region.id, stores, date))
-                .then((stores) => new Promise((resolve, reject) => { resolve(stores.map(v => { return {type:"PRODUCTS", typeId:v.id} })) }))
-    
-                // .then((stores) => this.credit_union_store_repository.save(stores, date))
-                // .then(() => new Promise((resolve, reject) => { resolve(["STORES", local.id + 1]) }))
+                .then((stores) => new Promise(resolve => { resolve(stores.map(v => { return {type:"PRODUCTS", typeId:v.id} })) }))
             })
-        // case "PRODUCTS" : 
-        //     console.log('신협 상품단위 수집 => 조합단위 ID : ' + transaction.typeId);
-        //     return this.credit_union_store_repository.findByIdGte(transaction.typeId, date)
-        //     .then((store) => {
-        //         if(store == null) {
-        //             return new Promise((resolve, reject) => { resolve(["PRODUCT_INTEREST", 0]) })
-        //         }
-        //         return this.credit_union_remote.getProducts(store.storeCode)
-        //         .then((products) => this.credit_union_product_repository.save(products, store.localCode, date))
-        //         .then(() => new Promise((resolve, reject) => { resolve(["PRODUCTS", store.id + 1]) }))
-        //     })
-        // case "PRODUCT_INTEREST" : 
-        //     console.log('신협 상품금리 수집 => 상품단위 ID : ' + transaction.typeId);
-        //     return this.credit_union_product_repository.findByIdGte(transaction.typeId, date)
-        //     .then((product) => {
-        //         if(product == null) return null
-        //         return this.credit_union_remote.getProductDetail(product.storeCode, product.productCode)
-        //         .then((interest) => this.credit_union_product_repository.updateInterestById(product.id, interest))
-        //         .then(() => new Promise((resolve, reject) => { resolve(["PRODUCT_INTEREST", product.id + 1]) }))
-        //     })
+        case "PRODUCTS" : 
+            console.log('새마을금고 상품단위 수집 => 금고단위 ID : ' + transaction.typeId);
+            return this.kfcc_store_repository.findById(transaction.typeId, date)
+            .then((store) => {
+                if(store == null) {
+                    return new Promise(resolve => { resolve(null) })
+                }
+                return this.kfcc_remote.getProducts(store.code)
+                .then((products) => this.kfcc_product_repository.save(store.id, products, date))
+                .then(() => new Promise(resolve => { resolve(null) }))
+            })
         default :
             console.error("잘못된 새마을금고 트랜잭션이 존재합니다.", transaction);
             return;
