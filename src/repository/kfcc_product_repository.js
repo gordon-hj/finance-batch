@@ -17,6 +17,7 @@ class KfccProduct {
 }
 
 exports.save = (storeId, values, date) => {
+    if(values.length <= 0) return new Promise(resolve => { resolve([]) })
     let insertValues = values.map(value => [storeId, value.name, value.period, value.interestRaw, value.interest, date]);
     return new Promise((resolve, reject) => 
     this.ds.query(

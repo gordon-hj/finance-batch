@@ -14,6 +14,7 @@ class KfccRegion {
 }
 
 exports.save = (values, date) => {
+    if(values.length <= 0) return new Promise(resolve => { resolve([]) })
     let insertValues = values.map(value => [value.regionName, value.localName, date]);
     return new Promise((resolve, reject) => 
     this.ds.query(

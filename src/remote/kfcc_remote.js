@@ -71,41 +71,45 @@ exports.getStores = function(regionName, localName) {
         }
 ))};
 
-exports.getProducts = function(gmgoCd) {
-    return new Promise((resolve, reject) => 
-        request({
-            uri: `https://www.kfcc.co.kr/map/goods_19.do`,
-            method: 'POST',
-            form: {OPEN_TRMID:gmgoCd, gubuncode:13}, // 13: 예금, 14: 적금
-        },
-        function(err, res, body){
-            if(err) {
-                console.error("Request Error !! ==> " + err)
-                reject(err)
-            }
-            const $ = cheerio.load(body, {decodeEntities: false});
-            var productRaws = $("div[id^='divTmp']")
-            .filter((_, e) => e.attribs.style != 'display: none')
-            .map((_, e) => {
-                var t = cheerio.load(e)
-                var products = []
-                var name = t('.tbl-tit')[0].children[0].data
+exports.getProducts = function(code) {
+     // 13: 예금, 14: 적금
+    return Promise.all([getProducts(code, 13), getProducts(code, 14)]).then(r => r.flat())
+};
 
-                t('tbody tr').map((i, a) => {
-                    var product = {name:name}
-                    var tds = cheerio.load(a)('td')
-                    var periodIndex = (i == 0) ? 1 : 0
-                    var interestIndex = (i == 0) ? 2 : 1
-                    product.period = tds[periodIndex].children[0].data
-                    product.interestRaw = tds[interestIndex].children[0].data
-                    product.interest = parseFloat(product.interestRaw.replace(/[^0-9.]/g, ''))
-                    products.push(product)
-                })
-                return products
-            })
-            var products = Array.from(productRaws)
 
-            console.debug('새마을금고 금고 상품 조회 => ', products);
-            resolve(products)
+const getProducts = (gmgoCd, gubuncode) => new Promise((resolve, reject) => 
+    request({
+        uri: `https://www.kfcc.co.kr/map/goods_19.do`,
+        method: 'POST',
+        form: {OPEN_TRMID:gmgoCd, gubuncode:gubuncode}, // 13: 예금, 14: 적금
+    },
+    function(err, res, body){
+        if(err) {
+            console.error("Request Error !! ==> " + err)
+            reject(err)
         }
-))};
+        const $ = cheerio.load(body, {decodeEntities: false});
+        var productRaws = $("div[id^='divTmp']")
+        .filter((_, e) => e.attribs.style != 'display: none')
+        .map((_, e) => {
+            var t = cheerio.load(e)
+            var products = []
+            var name = t('.tbl-tit')[0].children[0].data
+
+            t('tbody tr').map((i, a) => {
+                var product = {name:name}
+                var tds = cheerio.load(a)('td')
+                var periodIndex = (i == 0) ? 1 : 0
+                var interestIndex = (i == 0) ? 2 : 1
+                product.period = tds[periodIndex].children[0].data
+                product.interestRaw = tds[interestIndex].children[0].data
+                product.interest = parseFloat(product.interestRaw.replace(/[^0-9.]/g, ''))
+                products.push(product)
+            })
+            return products
+        })
+        var products = Array.from(productRaws)
+
+        console.debug('새마을금고 금고 상품 조회 => ', products);
+        resolve(products)
+}))

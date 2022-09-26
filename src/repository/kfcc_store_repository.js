@@ -17,6 +17,7 @@ class KfccStore {
 }
 
 exports.save = (regionId, values, date) => {
+    if(values.length <= 0) return new Promise(resolve => { resolve([]) })
     let insertValues = values.map(value => [regionId, value.gmgoCd, value.name, value.telephone, value.addr, date]);
     return new Promise((resolve, reject) => 
     this.ds.query(
