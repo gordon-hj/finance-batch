@@ -42,6 +42,7 @@ exports.save = (batchDate, type, typeId, status) => {
 }
 
 exports.saveAll = (batchDate, newTransactions, status) => {
+    if(values.length <= 0) return new Promise(resolve => { resolve() })
     let insertValues = newTransactions.map(value => [batchDate, value.type, value.typeId, status]);
     return new Promise((resolve, reject) => 
         this.ds.query(
