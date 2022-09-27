@@ -5,8 +5,8 @@ const cron = require('node-cron');
 const context = require('./context')(phase);
 
 
-// 15초에 한 번씩 배치
-cron.schedule('*/15 * * * * *', function () {
+// 12초에 한 번씩 배치
+cron.schedule('*/12 * * * * *', function () {
     context.config_repository.findByKey('batch-allow')
     .then((result) => {
         if(result.value == true) {
