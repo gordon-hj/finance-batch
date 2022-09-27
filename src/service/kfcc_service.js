@@ -12,8 +12,17 @@ exports.do = () => {
     this.kfcc_batch_transaction_repository.findOldestNotDone(date)
     .then((transaction) => {
         if(transaction == null) {
-            console.log("새마을금고 신규 트랜잭션 시작");
-            return this.kfcc_batch_transaction_repository.save(date, "REGIONS", null, "START")
+            this.kfcc_batch_transaction_repository.exists(date)
+            .then((result) => {
+                if(result == true) {
+                    console.log("새마을금고 배치 완료")
+                    return
+                }
+                else {
+                    console.log("새마을금고 신규 트랜잭션 시작");
+                    return this.kfcc_batch_transaction_repository.save(date, "REGIONS", null, "START")        
+                }
+            })
         } 
         else if(transaction.status == 'END') {
             return;
